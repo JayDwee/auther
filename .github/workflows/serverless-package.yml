@@ -14,7 +14,7 @@ jobs:
           go-version: '1.23'
 
       - name: Build
-        run: GOOS=linux GOARCH=amd64 go build -tags lambda.norpc -o bootstrap cmd/lambda/main.go
+        run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0  go build -tags lambda.norpc -o bootstrap cmd/lambda/main.go
 
       - name: Add project code
         run: |
