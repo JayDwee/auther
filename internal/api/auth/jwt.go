@@ -46,12 +46,14 @@ func init() {
 // loadPrivateJWK loads the private JWK set from S3.
 // It returns the set of JWKs and an error if any.
 func loadPrivateJWK() (jwk.Set, error) {
+	log.Println("Starting to load private JWK from S3")
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		return nil, fmt.Errorf("failed to load AWS config: %w", err)
 	}
 
 	client := s3.NewFromConfig(cfg)
+	log.Println("Connected to client")
 
 	output, err := client.GetObject(context.TODO(), &s3.GetObjectInput{
 		Bucket: aws.String(S3Bucket),
@@ -71,6 +73,7 @@ func loadPrivateJWK() (jwk.Set, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read S3 object body: %w", err)
 	}
+	log.Println("S3 read complete")
 
 	jwkSet, err := jwk.Parse(body)
 	if err != nil {
