@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
 	"net/http"
+	"os"
 )
 
 var router *http.ServeMux
@@ -16,5 +17,7 @@ func init() {
 
 func main() {
 	fmt.Println("Listening for requests")
-	lambda.Start(httpadapter.NewV2(router).ProxyWithContext)
+	adapter := httpadapter.NewV2(router)
+	adapter.StripBasePath(os.Getenv("API_GATEWAY_BASE_PATH"))
+	lambda.Start(adapter.ProxyWithContext)
 }
