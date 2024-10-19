@@ -31,7 +31,7 @@ func main() {
 	l := LoggerHandler{
 		handler: router,
 	}
-	adapter := httpadapter.NewV2(l)
+	adapter := httpadapter.New(l)
 	adapter.StripBasePath(os.Getenv("API_GATEWAY_BASE_PATH"))
 	lambda.Start(adapter.ProxyWithContext)
 }
