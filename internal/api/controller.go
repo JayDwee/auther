@@ -17,13 +17,13 @@ func TokenController(w http.ResponseWriter, r *http.Request) {
 
 	var aud string
 	switch tokenRequest.(type) {
-	case oauth2.AuthorizationCodeRequest:
+	case *oauth2.AuthorizationCodeRequest:
 		JsonErrorResponse(w, fmt.Errorf("Not Implemented"))
 		return
-	case oauth2.PasswordRequest:
+	case *oauth2.PasswordRequest:
 		JsonErrorResponse(w, fmt.Errorf("Not Implemented"))
 		return
-	case oauth2.ClientCredentialsRequest:
+	case *oauth2.ClientCredentialsRequest:
 		basicAuth, err := auth.ToBasicAuth(r)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -35,9 +35,7 @@ func TokenController(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		aud = basicAuth.Username
-
-		return
-	case oauth2.RefreshTokenRequest:
+	case *oauth2.RefreshTokenRequest:
 		JsonErrorResponse(w, fmt.Errorf("Not Implemented"))
 		return
 	}
