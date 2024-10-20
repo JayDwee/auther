@@ -1,8 +1,8 @@
 package api
 
 import (
-	"auther/internal/api/auth"
-	"auther/internal/api/auth/oauth2"
+	"auther/internal/auth"
+	"auther/internal/auth/oauth2"
 	"fmt"
 	"net/http"
 	"os"
