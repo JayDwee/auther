@@ -5,7 +5,7 @@ import (
 )
 
 func registerControllers(mux *http.ServeMux) {
-	mux.HandleFunc("POST /token", TokenController)
+	mux.HandleFunc("POST /as/{id}/token", TokenController)
 }
 
 func Router() *http.ServeMux {

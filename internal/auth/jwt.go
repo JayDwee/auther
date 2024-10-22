@@ -2,90 +2,101 @@
 package auth
 
 import (
-	"context"
+	"auther/internal/auth_server"
 	"fmt"
-	"io"
-	"log"
 	"os"
 	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
 	"github.com/lestrrat-go/jwx/jwa"
-	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jwt"
 )
 
 // Constants for JWT token generation and verification.
 const (
-	// Issuer is the issuer of the JWT token.
-	Issuer = "temp.auther.koalabot.uk"
 	// TokenExpiry is the expiry duration of the JWT token.
 	TokenExpiry = 1 * time.Hour
 
-	// S3Bucket S3 bucket containing the private JWK file.
-	S3Bucket = "auther"
 	// S3Key is the path to the private JWK file.
-	S3Key = "private/jwks.json"
+	//S3Key = "private/jwks.json"
 )
 
-// jwkSet is the set of JWKs used for signing and verifying tokens.
-var jwkSet jwk.Set
+var (
+	// Issuer is the issuer of the JWT token.
+	Issuer = os.Getenv("ISSUER")
 
-// init loads the private JWK set from S3.
-func init() {
-	var err error
-	jwkSet, err = loadPrivateJWK()
-	if err != nil {
-		log.Fatalf("failed to load private JWK: %v", err)
-	}
-}
+	//// Default Client TODO Remove, custom per client
+	//DefaultClient = os.Getenv("DEFAULT_CLIENT")
+	//
+	//// S3Bucket S3 bucket containing the private JWK file.
+	//S3Bucket = os.Getenv("S3_BUCKET") // TODO Write to S3 when new keys generated
+)
 
-// loadPrivateJWK loads the private JWK set from S3.
-// It returns the set of JWKs and an error if any.
-func loadPrivateJWK() (jwk.Set, error) {
-	log.Println("Starting to load private JWK from S3")
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		return nil, fmt.Errorf("failed to load AWS config: %w", err)
-	}
-
-	client := s3.NewFromConfig(cfg)
-	log.Println("Connected to client")
-
-	output, err := client.GetObject(context.TODO(), &s3.GetObjectInput{
-		Bucket: aws.String(S3Bucket),
-		Key:    aws.String(S3Key),
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to get S3 object: %w", err)
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Fatalf("failed to close S3 object body: %v", err)
-		}
-	}(output.Body)
-
-	body, err := io.ReadAll(output.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read S3 object body: %w", err)
-	}
-	log.Println("S3 read complete")
-
-	jwkSet, err := jwk.Parse(body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse JWK: %w", err)
-	}
-
-	return jwkSet, nil
-}
+//
+//// jwkSet is the set of JWKs used for signing and verifying tokens.
+//var jwkSet jwk.Set
+//
+//// init loads the private JWK set from S3.
+//func init() {
+//	var err error
+//	jwkSet, err = LoadPrivateJWKFromDynamo()
+//	if err != nil {
+//		log.Fatalf("failed to load private JWK: %v", err)
+//	}
+//}
+//
+//func LoadPrivateJWKFromDynamo() (jwk.Set, error) {
+//	key, err := auth_server.AuthorizationServerRepository.GetByHashKey(context.TODO(), DefaultClient)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return key.JWKs, nil
+//}
+//
+//// LoadPrivateJWK loads the private JWK set from S3.
+//// It returns the set of JWKs and an error if any.
+//func LoadPrivateJWKFromS3() (jwk.Set, error) {
+//	log.Println("Starting to load private JWK from S3")
+//	cfg, err := config.LoadDefaultConfig(context.TODO())
+//	if err != nil {
+//		return nil, fmt.Errorf("failed to load AWS config: %w", err)
+//	}
+//
+//	client := s3.NewFromConfig(cfg)
+//	log.Println("Connected to client")
+//
+//	output, err := client.GetObject(context.TODO(), &s3.GetObjectInput{
+//		Bucket: aws.String(S3Bucket),
+//		Key:    aws.String(S3Key),
+//	})
+//	if err != nil {
+//		return nil, fmt.Errorf("failed to get S3 object: %w", err)
+//	}
+//	defer func(Body io.ReadCloser) {
+//		err := Body.Close()
+//		if err != nil {
+//			log.Fatalf("failed to close S3 object body: %v", err)
+//		}
+//	}(output.Body)
+//
+//	body, err := io.ReadAll(output.Body)
+//	if err != nil {
+//		return nil, fmt.Errorf("failed to read S3 object body: %w", err)
+//	}
+//	log.Println("S3 read complete")
+//
+//	jwkSet, err := jwk.Parse(body)
+//	if err != nil {
+//		return nil, fmt.Errorf("failed to parse JWK: %w", err)
+//	}
+//
+//	return jwkSet, nil
+//}
 
 // GenerateToken generates a JWT token with the given audience and scope.
 // It returns the signed token and an error if any.
-func GenerateToken(audience, scope string) (string, error) {
+func GenerateToken(as *auth_server.AuthorizationServerModel, audience string, scope string) (string, error) {
 	token := jwt.New()
 
 	for key, val := range map[string]interface{}{
@@ -103,7 +114,7 @@ func GenerateToken(audience, scope string) (string, error) {
 		}
 	}
 
-	jwkRsa, exists := jwkSet.LookupKeyID(os.Getenv("JWK_KID"))
+	jwkRsa, exists := as.JWKs.LookupKeyID(as.ActiveKID)
 	if !exists {
 		return "", fmt.Errorf("JWK_KID not found in %s", jwkRsa)
 	}

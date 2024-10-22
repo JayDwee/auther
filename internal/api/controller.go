@@ -3,9 +3,9 @@ package api
 import (
 	"auther/internal/auth"
 	"auther/internal/auth/oauth2"
+	"auther/internal/auth_server"
 	"fmt"
 	"net/http"
-	"os"
 )
 
 func TokenController(w http.ResponseWriter, r *http.Request) {
@@ -14,6 +14,8 @@ func TokenController(w http.ResponseWriter, r *http.Request) {
 		JsonErrorResponse(w, err)
 		return
 	}
+
+	as, err := auth_server.AuthorizationServerRepository.GetByHashKey(r.Context(), r.PathValue("id")) // Add cache
 
 	var aud string
 	switch tokenRequest.(type) {
@@ -30,18 +32,23 @@ func TokenController(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err.Error())
 			return
 		}
-		if basicAuth.Username != os.Getenv("CLIENT_ID") || basicAuth.Password != os.Getenv("CLIENT_SECRET") {
+		for _, client := range as.Clients {
+			if basicAuth.Username == client.ClientId && basicAuth.Password == client.ClientSecret {
+				aud = client.ClientId
+				break
+			}
+		}
+		if aud == "" {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		aud = basicAuth.Username
 	case *oauth2.RefreshTokenRequest:
 		JsonErrorResponse(w, fmt.Errorf("Not Implemented"))
 		return
 	}
 
 	requestedScope := r.FormValue("scope")
-	token, err := auth.GenerateToken(aud, requestedScope)
+	token, err := auth.GenerateToken(as, aud, requestedScope)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Println(err.Error())

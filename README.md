@@ -16,6 +16,12 @@ Serverless authentication provider Developed in Go
 - Create an Authorization Server
 - Link to Resource Owner
 - Create Clients
+- Custom Claims
+- Configurable Token
+  - JWT
+  - JWE
+  - Opaque
+- Blacklist
 
 ## RFCs Supported
 - [6749 - The OAuth 2.0 Authorization Framework](https://datatracker.ietf.org/doc/html/rfc6749)
