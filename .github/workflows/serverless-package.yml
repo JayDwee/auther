@@ -48,12 +48,12 @@ jobs:
         run: |
           ls
           # Constants
-          S3_BUCKET=auther
+          S3_BUCKET=auther-dev
           S3_KEY=auther.zip
           aws s3 cp auther.zip s3://$S3_BUCKET/$S3_KEY
           
           # Update Lambda function code
-          LAMBDA_FUNCTION_NAME=auther
+          LAMBDA_FUNCTION_NAME=auther-dev-lambda-function
           aws lambda wait function-updated --function-name $LAMBDA_FUNCTION_NAME
           aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --s3-bucket $S3_BUCKET --s3-key $S3_KEY
           aws lambda wait function-updated --function-name $LAMBDA_FUNCTION_NAME
