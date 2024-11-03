@@ -25,6 +25,7 @@ Serverless authentication provider Developed in Go
 
 ## RFCs Supported
 - [6749 - The OAuth 2.0 Authorization Framework](https://datatracker.ietf.org/doc/html/rfc6749)
+- [7009 - Token Revocation](https://datatracker.ietf.org/doc/html/rfc7009)
 - [7515 - JSON Web Signature (JWS)](https://datatracker.ietf.org/doc/html/rfc7515)
 - [7516 - JSON Web Encryption (JWE)](https://datatracker.ietf.org/doc/html/rfc7516)
 - [7517 - JSON Web Key (JWK)](https://datatracker.ietf.org/doc/html/rfc7517)
@@ -32,6 +33,7 @@ Serverless authentication provider Developed in Go
 - [7519 - JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519)
 - [7617 - The 'Basic' HTTP Authentication Scheme](https://datatracker.ietf.org/doc/html/rfc7617)
 - [7638 - JSON Web Key (JWK) Thumbprint](https://datatracker.ietf.org/doc/html/rfc7638)
+- [7662 - Oauth 2.0 Token Introspection](https://datatracker.ietf.org/doc/html/rfc7662)
 - [7797 - JSON Web Signature (JWS) Unencoded Payload Option](https://datatracker.ietf.org/doc/html/rfc7797)
 
 ## Infrastructure
