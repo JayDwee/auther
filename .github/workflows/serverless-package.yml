@@ -75,4 +75,4 @@ jobs:
         run: |
           S3_BUCKET=auther-dev
           S3_KEY=static
-          aws s3 cp ./web/static s3://$S3_BUCKET/$S3_KEY
+          aws s3 sync ./web/static s3://$S3_BUCKET/$S3_KEY
