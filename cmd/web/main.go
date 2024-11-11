@@ -1,22 +1,27 @@
 package main
 
 import (
-	"auther/internal/api"
-	"fmt"
+	"auther/api/handler"
+	"log"
 	"net/http"
 )
 
 var router *http.ServeMux
 
 func init() {
-	router = api.Router()
+	router = handler.Router()
+}
+
+func hostStaticWeb() {
+	router.Handle("GET /", http.FileServer(http.Dir("./web/static")))
 }
 
 func main() {
-	fmt.Println("Listening for requests")
+	log.Println("Listening for requests")
+	hostStaticWeb()
 	err := http.ListenAndServe(":8080", router)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		return
 	}
 }

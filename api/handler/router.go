@@ -1,11 +1,14 @@
-package api
+package handler
 
 import (
+	"auther/api/handler/application"
+	"auther/api/handler/oauth2"
 	"net/http"
 )
 
 func registerControllers(mux *http.ServeMux) {
-	mux.HandleFunc("POST /as/{id}/token", TokenController)
+	application.RegisterControllers(mux)
+	oauth2.RegisterControllers(mux)
 }
 
 func Router() *http.ServeMux {

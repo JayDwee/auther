@@ -23,7 +23,7 @@ Serverless authentication provider Developed in Go
   - Opaque
 - Blacklist
 
-## RFCs Supported
+## RFCs
 - [6749 - The OAuth 2.0 Authorization Framework](https://datatracker.ietf.org/doc/html/rfc6749)
 - [6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750)
 - [7009 - Oauth 2.0 Token Revocation](https://datatracker.ietf.org/doc/html/rfc7009)
@@ -39,6 +39,7 @@ Serverless authentication provider Developed in Go
 - [7662 - Oauth 2.0 Token Introspection](https://datatracker.ietf.org/doc/html/rfc7662)
 - [7797 - JSON Web Signature (JWS) Unencoded Payload Option](https://datatracker.ietf.org/doc/html/rfc7797)
 - [8252 - OAuth 2.0 for Native Apps](https://datatracker.ietf.org/doc/html/rfc8252)
+- [8414 - OAuth 2.0 Authorization Server Metadata](https://datatracker.ietf.org/doc/html/rfc8414)
 - [8628 - OAuth 2.0 Device Authorization Grant](https://datatracker.ietf.org/doc/html/rfc8628)
 - [8693 - OAuth 2.0 Token Exchange](https://datatracker.ietf.org/doc/html/rfc8693)
 - [8725 - JSON Web Token Best Current Practices](https://datatracker.ietf.org/doc/html/rfc8725)

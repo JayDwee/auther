@@ -58,3 +58,21 @@ jobs:
           aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --s3-bucket $S3_BUCKET --s3-key $S3_KEY
           aws lambda wait function-updated --function-name $LAMBDA_FUNCTION_NAME
 
+  upload-auther-static:
+    name: Upload Auther Static Site to S3 🪣
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - name: Deploy Modified Files
+        run: |
+          S3_BUCKET=auther-dev
+          S3_KEY=static
+          aws s3 cp ./web/static s3://$S3_BUCKET/$S3_KEY

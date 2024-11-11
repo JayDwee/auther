@@ -1,7 +1,7 @@
 package main
 
 import (
-	"auther/internal/api"
+	"auther/api/handler"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
 	"log"
@@ -12,7 +12,7 @@ import (
 var router *http.ServeMux
 
 func init() {
-	router = api.Router()
+	router = handler.Router()
 }
 
 type LoggerHandler struct {

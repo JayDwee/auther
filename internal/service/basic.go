@@ -1,8 +1,8 @@
-package auth
+package service
 
 import (
 	"encoding/base64"
-	"fmt"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -15,7 +15,7 @@ type BasicAuth struct {
 func ToBasicAuth(r *http.Request) (auth BasicAuth, err error) {
 	decoded, err := base64.StdEncoding.DecodeString(strings.TrimPrefix(r.Header.Get("Authorization"), "Basic "))
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		return BasicAuth{}, err
 	}
 	parts := strings.Split(string(decoded), ":")
